@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 from typing import Optional
 
-# Import streamlit
+
 import streamlit as st
 
 
@@ -180,67 +180,62 @@ def initialize_session_state():
 
 
 def display_header():
-    """Display the main header."""
-    st.markdown('<div class="main-header">📚 RAG Question Answering System</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">Upload educational PDFs and get instant answers powered by AI</div>', unsafe_allow_html=True)
     
-    # Quick tips in an expander
-    with st.expander("💡 Quick Tips - Click to expand", expanded=False):
+    st.markdown('<div class="main-header">📚 RAG Question Answering System</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-header">Upload educational PDFs and get instant answers</div>', unsafe_allow_html=True)
+    
+    
+    with st.expander(" Quick Tips - Click to expand", expanded=False):
         col1, col2, col3 = st.columns(3)
         with col1:
             st.markdown("""
-            **📤 Upload Documents**
+            **Upload Documents**
             - Support for PDF files
             - Up to 100MB per file
-            - Multiple documents supported
             """)
         with col2:
             st.markdown("""
-            **💬 Ask Questions**
+            ** Ask Questions**
             - Ask specific questions
-            - Request step-by-step solutions
-            - Follow-up questions work great
             """)
         with col3:
             st.markdown("""
-            **🔍 View Sources**
+            ** View Sources**
             - Click "View Sources" to see references
-            - Check page numbers
-            - Verify answer accuracy
             """)
     
-    # Demo mode notice
+    
     try:
         if 'OPENAI_API_KEY' in st.secrets:
-            st.info("📌 **Demo Mode:** Uploaded documents are temporary and will be reset when the app restarts.", icon="ℹ️")
+            st.info(" **Demo Mode:** Uploaded documents are temporary and will be reset when the app restarts.", icon="ℹ️")
     except (FileNotFoundError, AttributeError):
         pass
 
 
 def display_sidebar():
-    """Display sidebar with document management and settings."""
+    
     with st.sidebar:
-        st.header("📊 Dashboard")
+        st.header(" Dashboard")
         
-        # Database statistics
+        
         if st.session_state.engine_initialized:
             try:
                 db_info = st.session_state.rag_engine.get_database_info()
                 col1, col2 = st.columns(2)
                 with col1:
-                    st.metric("📄 Documents", len(st.session_state.uploaded_documents))
+                    st.metric("Documents", len(st.session_state.uploaded_documents))
                 with col2:
-                    st.metric("🧩 Chunks", db_info.get('count', 0))
+                    st.metric(" Chunks", db_info.get('count', 0))
             except Exception as e:
-                st.warning(f"⚠️ Could not load database info: {e}")
+                st.warning(f" Could not load database info: {e}")
         
         st.divider()
         
-        # Uploaded documents list
-        st.subheader("📚 Uploaded Documents")
+        
+        st.subheader(" Uploaded Documents")
         if st.session_state.uploaded_documents:
             for i, doc in enumerate(st.session_state.uploaded_documents, 1):
-                with st.expander(f"📄 {doc['filename']}", expanded=False):
+                with st.expander(f" {doc['filename']}", expanded=False):
                     st.markdown(f"""
                     - **Chunks:** {doc['chunk_count']}
                     - **Size:** {doc['file_size_mb']:.2f} MB
@@ -248,38 +243,38 @@ def display_sidebar():
                     - **Processing:** {doc.get('processing_time', 0):.2f}s
                     """)
         else:
-            st.info("📭 No documents uploaded yet\n\nGo to the 'Upload Documents' tab to get started!")
+            st.info(" No documents uploaded yet\n\nGo to the 'Upload Documents' tab to get started!")
         
         st.divider()
         
-        # Action buttons
-        st.subheader("⚙️ Actions")
+        
+        st.subheader(" Actions")
         
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("🗑️ Clear Chat", use_container_width=True, help="Clear conversation history"):
+            if st.button(" Clear Chat", use_container_width=True, help="Clear conversation history"):
                 st.session_state.messages = []
                 if st.session_state.engine_initialized:
                     st.session_state.rag_engine.clear_conversation_history()
                 st.rerun()
         
         with col2:
-            if st.button("🔄 Reset DB", use_container_width=True, type="secondary", help="Delete all documents"):
+            if st.button(" Reset DB", use_container_width=True, type="secondary", help="Delete all documents"):
                 if st.session_state.engine_initialized:
                     try:
                         st.session_state.rag_engine.reset_database()
                         st.session_state.uploaded_documents = []
                         st.session_state.messages = []
-                        st.success("✅ Database reset!")
+                        st.success(" Database reset!")
                         time.sleep(1)
                         st.rerun()
                     except Exception as e:
-                        st.error(f"❌ Failed to reset: {e}")
+                        st.error(f" Failed to reset: {e}")
         
         st.divider()
         
-        # System settings
-        st.subheader("⚙️ System Settings")
+        
+        st.subheader(" System Settings")
         if st.session_state.engine_initialized:
             config = st.session_state.rag_engine.config
             st.markdown(f"""
@@ -292,17 +287,17 @@ def display_sidebar():
         
         st.divider()
         
-        # Footer
-        st.caption("💡 Powered by OpenAI & LangChain")
-        st.caption("🔒 Your data is processed securely")
+        
+        st.caption(" Powered by OpenAI & LangChain")
+        st.caption("Your data is processed securely")
 
 
 def handle_pdf_upload():
-    """Handle PDF document upload and processing."""
-    st.subheader("📤 Upload PDF Document")
+ 
+    st.subheader(" Upload PDF Document")
     
-    # Info box
-    st.info("📋 **Supported:** PDF files up to 100MB | **Best for:** Textbooks, research papers, study materials", icon="ℹ️")
+    
+    st.info(" **Supported:** PDF files up to 100MB | **Best for:** Textbooks, research papers, study materials", icon="ℹ️")
     
     uploaded_file = st.file_uploader(
         "Drag and drop or click to browse",
@@ -312,20 +307,20 @@ def handle_pdf_upload():
     )
     
     if uploaded_file is not None:
-        # Show file info
+        
         file_size_mb = len(uploaded_file.getvalue()) / (1024 * 1024)
         
         col1, col2, col3 = st.columns([2, 1, 1])
         with col1:
-            st.write(f"**📄 File:** {uploaded_file.name}")
+            st.write(f"** File:** {uploaded_file.name}")
         with col2:
-            st.write(f"**📊 Size:** {file_size_mb:.2f} MB")
+            st.write(f"** Size:** {file_size_mb:.2f} MB")
         with col3:
-            st.write(f"**📝 Type:** PDF")
+            st.write(f"** Type:** PDF")
         
         st.divider()
         
-        if st.button("🚀 Process Document", type="primary", use_container_width=True):
+        if st.button(" Process Document", type="primary", use_container_width=True):
             
             temp_path = f"temp_{uploaded_file.name}"
             
@@ -333,20 +328,20 @@ def handle_pdf_upload():
                 with open(temp_path, "wb") as f:
                     f.write(uploaded_file.getbuffer())
                 
-                # Show processing status with progress
-                with st.status("🔄 Processing document...", expanded=True) as status:
-                    st.write("📖 Loading PDF...")
+                
+                with st.status(" Processing document...", expanded=True) as status:
+                    st.write(" Loading PDF...")
                     time.sleep(0.3)
                     
-                    st.write("✂️ Splitting into chunks...")
+                    st.write(" Splitting into chunks...")
                     time.sleep(0.3)
                     
-                    st.write("🧠 Generating embeddings...")
+                    st.write(" Generating embeddings...")
                     time.sleep(0.3)
                     
-                    st.write("💾 Storing in database...")
+                    st.write(" Storing in database...")
                     
-                    # Process document
+                
                     start_time = time.time()
                     doc_info = st.session_state.rag_engine.ingest_document(
                         temp_path,
@@ -354,9 +349,9 @@ def handle_pdf_upload():
                     )
                     processing_time = time.time() - start_time
                     
-                    status.update(label="✅ Document processed successfully!", state="complete")
+                    status.update(label=" Document processed successfully!", state="complete")
                 
-                # Add to uploaded documents list
+                
                 st.session_state.uploaded_documents.append({
                     'filename': uploaded_file.name,
                     'chunk_count': doc_info.chunk_count,
@@ -365,14 +360,14 @@ def handle_pdf_upload():
                     'processing_time': processing_time
                 })
                 
-                # Success message with stats
+                
                 st.markdown(f"""
                     <div class="success-box">
-                        <strong>✅ Success!</strong><br><br>
-                        📄 <strong>Document:</strong> {uploaded_file.name}<br>
-                        🧩 <strong>Chunks created:</strong> {doc_info.chunk_count}<br>
-                        ⏱️ <strong>Processing time:</strong> {processing_time:.2f}s<br>
-                        💾 <strong>File size:</strong> {doc_info.file_size_mb:.2f} MB
+                        <strong> Success!</strong><br><br>
+                         <strong>Document:</strong> {uploaded_file.name}<br>
+                         <strong>Chunks created:</strong> {doc_info.chunk_count}<br>
+                         <strong>Processing time:</strong> {processing_time:.2f}s<br>
+                         <strong>File size:</strong> {doc_info.file_size_mb:.2f} MB
                     </div>
                 """, unsafe_allow_html=True)
                 
@@ -383,21 +378,21 @@ def handle_pdf_upload():
             except Exception as e:
                 st.markdown(f"""
                     <div class="error-box">
-                        <strong>❌ Error!</strong><br><br>
+                        <strong> Error!</strong><br><br>
                         {str(e)}<br><br>
                         <small>Please check the file and try again.</small>
                     </div>
                 """, unsafe_allow_html=True)
             
             finally:
-                # Clean up temporary file
+              
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
     else:
-        # Show helpful message when no file is uploaded
+        
         st.markdown("""
         <div style="text-align: center; padding: 3rem; background-color: #f8f9fa; border-radius: 12px; border: 2px dashed #dee2e6;">
-            <h3 style="color: #6c757d;">📁 No file selected</h3>
+            <h3 style="color: #6c757d;"> No file selected</h3>
             <p style="color: #6c757d;">Upload a PDF document to get started</p>
         </div>
         """, unsafe_allow_html=True)
@@ -407,23 +402,23 @@ def display_chat_interface():
     """Display the chat interface for Q&A."""
     col1, col2 = st.columns([3, 1])
     with col1:
-        st.subheader("💬 Ask Questions")
+        st.subheader(" Ask Questions")
     with col2:
         if len(st.session_state.messages) > 0:
-            st.caption(f"🧠 {len(st.session_state.messages)//2} Q&A pairs in memory")
+            st.caption(f"{len(st.session_state.messages)//2} Q&A pairs in memory")
     
-    # Show welcome message if no messages yet
+   
     if not st.session_state.messages:
         if st.session_state.uploaded_documents:
             st.markdown("""
             <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white; margin-bottom: 2rem;">
-                <h2 style="color: white; margin-bottom: 1rem;">👋 Ready to answer your questions!</h2>
+                <h2 style="color: white; margin-bottom: 1rem;"> Ready to answer your questions!</h2>
                 <p style="font-size: 1.1rem; margin-bottom: 0;">Ask anything about your uploaded documents below</p>
             </div>
             """, unsafe_allow_html=True)
             
-            # Example questions
-            st.markdown("**💡 Example questions you can ask:**")
+           
+            st.markdown("** Example questions you can ask:**")
             col1, col2 = st.columns(2)
             with col1:
                 st.markdown("""
@@ -458,23 +453,23 @@ def display_chat_interface():
                 # Show sources for assistant messages
                 if message["role"] == "assistant" and "sources" in message:
                     if message["sources"]:
-                        with st.expander("📚 View Sources"):
+                        with st.expander(" View Sources"):
                             for i, source in enumerate(message["sources"], 1):
                                 st.markdown(f"**{i}.** {source}")
                 
                 # Show generation time
                 if message["role"] == "assistant" and "generation_time" in message:
-                    st.caption(f"⏱️ Generated in {message['generation_time']:.2f}s")
+                    st.caption(f"⏱ Generated in {message['generation_time']:.2f}s")
     
     # Add some spacing before the chat input
     st.markdown("<br>", unsafe_allow_html=True)
     
     # Chat input - this persists the query after submission
     # The chat input is fixed at the bottom by Streamlit
-    if prompt := st.chat_input("💭 Ask a question about your documents...", key="chat_input"):
+    if prompt := st.chat_input(" Ask a question about your documents...", key="chat_input"):
         
         if not st.session_state.uploaded_documents:
-            st.warning("⚠️ Please upload at least one document before asking questions.")
+            st.warning(" Please upload at least one document before asking questions.")
             st.stop()
         
         # Display user message immediately
@@ -512,7 +507,7 @@ def display_chat_interface():
                     })
                     
                 except Exception as e:
-                    error_message = f"❌ Error generating answer: {str(e)}"
+                    error_message = f" Error generating answer: {str(e)}"
                     st.error(error_message)
                     st.session_state.messages.append({
                         "role": "assistant",
