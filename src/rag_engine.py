@@ -148,24 +148,39 @@ class RAGEngine:
             raise Exception(f"Failed to ingest document: {e}")
     
     def ask_question(self, question: str, use_context: bool = True) -> Answer:
-       
+        """
+        Answer a question using RAG with conversational memory.
+        
+        Args:
+            question: The user's question
+            use_context: Whether to use conversation history (default: True)
+        
+        Returns:
+            Answer object with text, sources, and confidence
+        """
         if not question or not question.strip():
             raise ValueError("Question cannot be empty")
         
         try:
-         
-            enhanced_question = question
+            # Retrieve relevant context from documents
+            context_documents = self.query_processor.retrieve_context(question)
+            
+            # Prepare chat history for conversational context
+            chat_history = []
             if use_context and self._conversation_history:
-             
-                pass
+                # Convert internal history format to chat format
+                for entry in self._conversation_history:
+                    chat_history.append({"role": "user", "content": entry['question']})
+                    chat_history.append({"role": "assistant", "content": entry['answer']})
             
-           
-            context_documents = self.query_processor.retrieve_context(enhanced_question)
+            # Generate answer with conversation history
+            answer = self.answer_generator.generate_answer(
+                question, 
+                context_documents,
+                chat_history=chat_history
+            )
             
-           
-            answer = self.answer_generator.generate_answer(enhanced_question, context_documents)
-            
-           
+            # Store in conversation history
             self._conversation_history.append({
                 'question': question,
                 'answer': answer.text
@@ -189,17 +204,9 @@ class RAGEngine:
         return self.vector_store_manager.get_collection_info()
     
     def reset_database(self) -> bool:
-        """
-        Delete all documents from the vector database.
         
-        Returns:
-            True if reset was successful
-            
-        Raises:
-            Exception: If reset fails
-        """
         try:
-            # Clear all documents from the collection (doesn't delete the database files)
+          
             self.vector_store_manager.clear_all_documents()
             
             # Clear conversation history
