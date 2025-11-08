@@ -1,0 +1,4 @@
+# System packages required for ChromaDB and other dependencies
+# These will be installed on Streamlit Cloud
+
+build-essential
