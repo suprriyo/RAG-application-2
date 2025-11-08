@@ -9,14 +9,14 @@ def test_pdf_loader():
     print("Testing PDFLoader...")
     loader = PDFLoader()
     
-    # Test validation with non-existent file
+    
     try:
         loader.validate_pdf("nonexistent.pdf")
         print(" Should have raised error for non-existent file")
     except PDFProcessingError as e:
         print(f" Correctly caught error: {e}")
     
-    # Test validation with non-PDF file
+
     try:
         loader.validate_pdf("config.yaml")
         print(" Should have raised error for non-PDF file")

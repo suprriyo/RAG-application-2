@@ -145,7 +145,7 @@ class Config:
     
     @staticmethod
     def _deep_copy_dict(d: Dict[str, Any]) -> Dict[str, Any]:
-        """Deep copy a dictionary."""
+        
         import copy
         return copy.deepcopy(d)
     

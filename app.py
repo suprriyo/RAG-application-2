@@ -371,7 +371,7 @@ def handle_pdf_upload():
                     </div>
                 """, unsafe_allow_html=True)
                 
-                st.balloons()  # Celebration animation!
+                st.balloons()
                 time.sleep(2)
                 st.rerun()
                 
@@ -399,7 +399,7 @@ def handle_pdf_upload():
 
 
 def display_chat_interface():
-    """Display the chat interface for Q&A."""
+ 
     col1, col2 = st.columns([3, 1])
     with col1:
         st.subheader(" Ask Questions")
@@ -435,51 +435,50 @@ def display_chat_interface():
         else:
             st.markdown("""
             <div style="text-align: center; padding: 3rem; background-color: #fff3cd; border-radius: 12px; border-left: 5px solid #ffc107;">
-                <h3 style="color: #856404;">📚 No documents uploaded yet</h3>
+                <h3 style="color: #856404;"> No documents uploaded yet</h3>
                 <p style="color: #856404; font-size: 1.1rem;">Please upload a PDF document first to start asking questions</p>
             </div>
             """, unsafe_allow_html=True)
             return
     
-    # Create a container for chat messages with scrolling
+
     chat_container = st.container()
     
-    # Display chat messages in the container
+   
     with chat_container:
         for message in st.session_state.messages:
             with st.chat_message(message["role"], avatar="🧑‍🎓" if message["role"] == "user" else "🤖"):
                 st.markdown(message["content"])
                 
-                # Show sources for assistant messages
+           
                 if message["role"] == "assistant" and "sources" in message:
                     if message["sources"]:
                         with st.expander(" View Sources"):
                             for i, source in enumerate(message["sources"], 1):
                                 st.markdown(f"**{i}.** {source}")
                 
-                # Show generation time
+             
                 if message["role"] == "assistant" and "generation_time" in message:
                     st.caption(f"⏱ Generated in {message['generation_time']:.2f}s")
     
-    # Add some spacing before the chat input
+
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Chat input - this persists the query after submission
-    # The chat input is fixed at the bottom by Streamlit
+   
     if prompt := st.chat_input(" Ask a question about your documents...", key="chat_input"):
         
         if not st.session_state.uploaded_documents:
             st.warning(" Please upload at least one document before asking questions.")
             st.stop()
         
-        # Display user message immediately
+       
         with st.chat_message("user", avatar="🧑‍🎓"):
             st.markdown(prompt)
         
-        # Add to message history
+       
         st.session_state.messages.append({"role": "user", "content": prompt})
         
-        # Generate response
+        
         with st.chat_message("assistant", avatar="🤖"):
             with st.spinner("Thinking..."):
                 try:
@@ -487,10 +486,10 @@ def display_chat_interface():
                     answer = st.session_state.rag_engine.ask_question(prompt)
                     generation_time = time.time() - start_time
                     
-                    # Display answer
+                  
                     st.markdown(answer.text)
                     
-                    # Display sources
+                    
                     if answer.sources:
                         with st.expander("📚 View Sources"):
                             for i, source in enumerate(answer.sources, 1):
@@ -498,7 +497,7 @@ def display_chat_interface():
                     
                     st.caption(f"⏱️ Generated in {generation_time:.2f}s")
                     
-                    # Add to message history
+                 
                     st.session_state.messages.append({
                         "role": "assistant",
                         "content": answer.text,
@@ -636,7 +635,7 @@ def display_evaluation_interface():
             with col5:
                 st.markdown("####  Generated Answer")
                 st.write(answer.text)
-                st.caption(f"⏱️ Retrieval: {retrieval_time:.3f}s | Generation: {generation_time:.3f}s")
+                st.caption(f"⏱ Retrieval: {retrieval_time:.3f}s | Generation: {generation_time:.3f}s")
                 
                 if answer.sources:
                     st.markdown("**Sources:**")

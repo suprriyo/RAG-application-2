@@ -10,27 +10,27 @@ def test_config():
     try:
         # Test loading config
         config = Config()
-        print("✓ Config loaded successfully")
+        print(" Config loaded successfully")
         
         # Test getting values
         embedding_provider = config.get('embedding.provider')
-        print(f"✓ Embedding provider: {embedding_provider}")
+        print(f" Embedding provider: {embedding_provider}")
         
         chunk_size = config.get('chunking.chunk_size')
-        print(f"✓ Chunk size: {chunk_size}")
+        print(f" Chunk size: {chunk_size}")
         
         # Test getting section
         llm_config = config.get_section('llm')
-        print(f"✓ LLM config: {llm_config}")
+        print(f"LLM config: {llm_config}")
         
-        print("✅ Config tests passed!\n")
+        print(" Config tests passed!\n")
         return True
         
     except ConfigError as e:
-        print(f"❌ Config error: {e}\n")
+        print(f" Config error: {e}\n")
         return False
     except Exception as e:
-        print(f"❌ Unexpected error: {e}\n")
+        print(f" Unexpected error: {e}\n")
         return False
 
 def test_rag_engine():
@@ -40,21 +40,21 @@ def test_rag_engine():
     try:
         # Test initialization
         engine = RAGEngine()
-        print("✓ RAGEngine initialized successfully")
+        print(" RAGEngine initialized successfully")
         
-        # Test getting database info
+        
         db_info = engine.get_database_info()
-        print(f"✓ Database info: {db_info}")
+        print(f"Database info: {db_info}")
         
-        # Test conversation history
+    
         history = engine.get_conversation_history()
-        print(f"✓ Conversation history: {len(history)} items")
+        print(f"Conversation history: {len(history)} items")
         
-        print("✅ RAGEngine tests passed!\n")
+        print(" RAGEngine tests passed!\n")
         return True
         
     except Exception as e:
-        print(f"❌ Error: {e}\n")
+        print(f" Error: {e}\n")
         return False
 
 if __name__ == "__main__":
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     
     print("=" * 60)
     if config_ok and engine_ok:
-        print("✅ All tests passed!")
+        print(" All tests passed!")
     else:
-        print("❌ Some tests failed")
+        print(" Some tests failed")
     print("=" * 60)

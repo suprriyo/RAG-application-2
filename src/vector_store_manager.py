@@ -45,8 +45,7 @@ class VectorStoreManager:
             vector_store = self._get_vector_store()
             
             # ChromaDB uses distance metrics where lower is better
-            # For now, we'll just return top k results without score filtering
-            # to ensure we get relevant results
+           
             documents = vector_store.similarity_search(query, k=k)
             
             return documents
@@ -73,20 +72,15 @@ class VectorStoreManager:
             }
     
     def clear_all_documents(self) -> bool:
-        """
-        Clear all documents from the collection without deleting the database.
-        
-        Returns:
-            True if successful
-        """
+       
         try:
             vector_store = self._get_vector_store()
             collection = vector_store._collection
             
-            # Get all document IDs
+           
             all_ids = collection.get()['ids']
             
-            # Delete all documents if any exist
+           
             if all_ids:
                 collection.delete(ids=all_ids)
             
@@ -95,15 +89,7 @@ class VectorStoreManager:
             raise Exception(f"Failed to clear documents: {e}")
     
     def delete_collection(self) -> bool:
-        """
-        Delete the entire collection.
         
-        Returns:
-            True if deletion was successful
-            
-        Raises:
-            Exception: If deletion fails
-        """
         try:
             if self._vector_store is not None:
                 self._vector_store.delete_collection()

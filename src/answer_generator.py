@@ -23,7 +23,7 @@ class Answer:
 
 
 class AnswerGenerator:
-    """Generates answers to questions using LLM and retrieved context."""
+ 
     
     def __init__(self, provider: str = "openai", model: str = "gpt-3.5-turbo", 
                  temperature: float = 0.7, max_tokens: int = 500):
@@ -159,22 +159,12 @@ Answer:"""
         return sources
     
     def generate_answer(self, question: str, context: List[Document], chat_history: List[dict] = None) -> Answer:
-        """
-        Generate an answer to a question using retrieved context and conversation history.
         
-        Args:
-            question: The current question
-            context: Retrieved document chunks
-            chat_history: List of previous messages [{"role": "user/assistant", "content": "..."}]
-        
-        Returns:
-            Answer object with text, sources, and confidence
-        """
         if not question or not question.strip():
             raise ValueError("Question cannot be empty")
         
         try:
-            # Handle case with no relevant context
+            
             if not context:
                 return Answer(
                     text="I cannot find relevant information about this in the uploaded material.",
@@ -182,13 +172,13 @@ Answer:"""
                     confidence=0.0
                 )
             
-            # Format context from documents
+           
             formatted_context = self._format_context(context)
             
-            # Format chat history for the prompt
+          
             formatted_history = self._format_chat_history(chat_history or [])
             
-            # Create the chain
+           
             chain = (
                 {
                     "context": lambda x: formatted_context,
@@ -200,10 +190,10 @@ Answer:"""
                 | StrOutputParser()
             )
             
-            # Generate answer
+           
             answer_text = chain.invoke(question)
             
-            # Extract sources
+           
             sources = self._extract_sources(context)
             
             return Answer(
@@ -216,12 +206,12 @@ Answer:"""
             raise Exception(f"Failed to generate answer: {e}")
     
     def _format_chat_history(self, chat_history: List[dict]) -> str:
-        """Format chat history for the prompt."""
+      
         if not chat_history:
             return "No previous conversation."
         
-        # Only include last 5 exchanges to avoid token limits
-        recent_history = chat_history[-10:]  # Last 5 Q&A pairs (10 messages)
+      
+        recent_history = chat_history[-10:]  
         
         formatted = []
         for msg in recent_history:
